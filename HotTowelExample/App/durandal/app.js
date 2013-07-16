@@ -7,7 +7,7 @@
         Events = require('./events');
 
     var MessageBox,
-        defaultTitle = 'Application';
+        defaultTitle = 'Easy Tasks';
 
     var app = {
         title: defaultTitle,

@@ -96,5 +96,46 @@ namespace HotTowelExample.Controllers
                     },
                 JsonRequestBehavior.AllowGet);
         }
+
+        /// <summary>
+        /// The invert is done.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        public ActionResult InvertIsDone(int id, bool value)
+        {
+            var succeeded = false;
+            string mess;
+            var task = db.TaskSet.FirstOrDefault(t => t.Id == id);
+            if (task == null)
+            {
+                mess = "Task was not found!";
+            }
+            else if (task.IsDone != value)
+            {
+                task.IsDone = value;
+                db.SaveChanges();
+                succeeded = true;
+                mess = value ? "Task marked as done!" : "Task marked as in progress!";
+            }
+            else
+            {
+                mess = "Task was already marked as " + (value ? "done" : "in progress") + "!";
+            }
+            return Json(
+                new
+                {
+                    success = succeeded,
+                    message = mess
+                },
+                JsonRequestBehavior.AllowGet);
+        }
     }
 }

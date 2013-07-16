@@ -1,5 +1,4 @@
-﻿define(['services/logger'], function (logger) {
-
+﻿define(['services/logger', 'durandal/app'], function (logger, app) {
     function Task(data) {
         this.Id = ko.observable(data.Id);
         this.IsDone = ko.observable(data.IsDone);
@@ -7,15 +6,21 @@
     }
 
     function removeTask(task, vm) {
-        var self = vm;
-        var url = "/Tasks/RemoveTask?taskId=" + task.Id();
-        $.getJSON(url, function (result) {
-            if (result) {
-                self.tasks.remove(task);
-                logger.log('Task Removed', null, 'tasks', true);
-            } else {
-                logger.logError('Task Was Not Removed', null, 'tasks', true);
+        app.showMessage("Do you realy want to delete this task?", "Delete", ['Yes', 'No']).then(function (confirm) {
+            if (confirm === 'No') {
+                return;
             }
+
+            var self = vm;
+            var url = "/Tasks/RemoveTask?taskId=" + task.Id();
+            $.getJSON(url, function(result) {
+                if (result) {
+                    self.tasks.remove(task);
+                    logger.log('Task Removed', null, 'tasks', true);
+                } else {
+                    logger.logError('Task Was Not Removed', null, 'tasks', true);
+                }
+            });
         });
     }
 
@@ -25,7 +30,6 @@
         $.getJSON(url, function (data) {
             if (data.error != null) {
                 logger.logError(data.error, null, 'tasks', true);
-                return;
             } else {
                 self.tasks.push(new Task(data.createdTask));
                 logger.log('Task Added', null, 'tasks', true);
@@ -34,9 +38,20 @@
         });
     }
 
+    function invertIsDone(task) {
+        var url = "/Tasks/InvertIsDone?id=" + task.Id() + "&value=" + task.IsDone();
+        $.getJSON(url, function(data) {
+            if (data.success) {
+                logger.log(data.message, null, 'tasks', true);
+            } else {
+                logger.logError(data.message, null, "tasks", true);
+                task.IsDone = ko.observable(!task.IsDone);
+            }
+        });
+    }
+
     function TasksModel() {
         var self = this;
-
         self.title = "Tasks list";
         self.tasks = ko.observableArray([]);
         self.newName = ko.observable();
@@ -46,6 +61,10 @@
         };
         self.addTask = function () {
             addTask(self);
+        };
+        self.invertIsDone = function(task) {
+            invertIsDone(task);
+            return true;
         };
 
         self.activate = function () {
@@ -60,9 +79,6 @@
     }
 
     var tasks = new TasksModel();
-    ko.applyBindings(tasks);
 
     return tasks;
-
-
 });

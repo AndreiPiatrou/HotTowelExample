@@ -1,17 +1,24 @@
 ﻿<section>
-    <h2 class="page-title" data-bind="text: title"></h2>
+    <div id="tasksListPage">
+        <h2 class="page-title" data-bind="text: title"></h2>
 
-    <ul data-bind="foreach: tasks, visible: tasks().length > 0">
-        <li>
-            <input class="checkbox" type="checkbox" data-bind="checked: IsDone" />
-            <input class="input-medium" data-bind="value: Name, disable: IsDone" />
-            <button class="btn-link" href="#" data-bind="click: $parent.removeTask">Delete</button>
-        </li>
-    </ul>
-
-    <form data-bind="submit: addTask">
-        Add task:
-        <input data-bind="value: newName" placeholder="What needs to be done?" />
-        <button class="btn-primary" type="submit">Add</button>
-    </form>
+        <div class="control-group">
+            <ul data-bind="foreach: tasks, visible: tasks().length > 0">
+                <li>
+                    <label class="checkbox" style="display: inline-block">
+                        <input type="checkbox" data-bind="checked: IsDone, click: $parent.invertIsDone"/>
+                    </label>
+                    <span data-bind="text: Name, disable: IsDone, style: { color: IsDone() ? 'red' : 'black' }"></span>
+                    <button class="btn btn-link" href="#" data-bind="click: $parent.removeTask">Delete</button>
+                </li>
+            </ul>
+        </div>
+        <form data-bind="submit: addTask">
+            <p>Add task:</p>
+            <label>
+                <input data-bind="value: newName" placeholder="What needs to be done?"/>
+            </label>
+            <button class="btn btn-primary" type="submit">Add</button>
+        </form>
+    </div>
 </section>

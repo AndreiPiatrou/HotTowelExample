@@ -4,10 +4,9 @@
             activate: activate,
             router: router
         };
-        
+
         return shell;
 
-        //#region Internal Methods
         function activate() {
             return boot();
         }
@@ -15,12 +14,11 @@
         function boot() {
             router.mapNav('tasks');
             router.mapNav('about');
-            log('Hot Towel SPA Loaded!', null, true);
+            log('Hot Towel SPA Loaded!', null, false);
             return router.activate('tasks');
         }
 
         function log(msg, data, showToast) {
             logger.log(msg, data, system.getModuleId(shell), showToast);
         }
-        //#endregion
     });
